@@ -1,8 +1,9 @@
 :Author:
   Andrea Ocone 
   Institute of Computational Biology, Helmholtz Zentrum Muenchen
-:Email: <andrea.ocone@helmholtz-muenchen.de>
+:Email: andrea.ocone@helmholtz-muenchen.de
 :Date: April, 13. 2015
+:DOI: https://doi.org/10.1093/bioinformatics/btv257
 
 SOURCES
 =======
@@ -37,4 +38,4 @@ PROBLEMS AND COMMENTS
 =====================
 
 A more user friendly version of the code will be available soon.
-Please address any problem or comment to: <andrea.ocone@helmholtz-muenchen.de>
+Please address any problem or comment to: andrea.ocone@helmholtz-muenchen.de
