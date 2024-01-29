@@ -1,0 +1,21 @@
+
+1) generationData.m
+   Generate snapshot data from toggle switch model
+
+2) DiffusionMaps.m
+   Generate diffusion map embeddings of snapshot data
+
+3) pseudotime/ordering
+   Branch clustering + Wanderlust algorithm
+
+4) pseudotime/replicates/generatePseudoTS.m
+   Generate pseudo time-series files and GP emulators
+
+5) inference/geneC/'ODEmodel'/paramest.cpp
+   Parameter estimation
+
+6) inference/testFitsC.m
+   Compute AIC and BIC statistics
+
+7) inference/geneC/BayesFactor/'ODEmodel'/computeBF.cpp
+   Compute log marginal likelihood with thermodynamic integration (trapezoidal rule)

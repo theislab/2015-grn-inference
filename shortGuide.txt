@@ -1,0 +1,98 @@
+
+------------------------------------------------------------------------------------------
+                        		Short guide for C++ files
+------------------------------------------------------------------------------------------
+
+******************************************************************************************
+
+Header file (paramestFuns.h) [example in ToggleSwitch/inference/geneC/ORpm]
+
+ODE function (e.g. AND/OR logic) is defined in function "solveODE", as described in main
+paper and SI. Function "solveODE" contains an approximation of the ODE function (in this
+case a simple RK4).
+
+******************************************************************************************
+
+C++ file (paramest.cpp) [example in ToggleSwitch/inference/geneC/ORpm]
+
+We shortly describe file variables for subnetwork with input genes gA and gD, regulating
+target gene gC with OR gate.
+
+geneIndA --> index of target gene (e.g. 3 <-- gC)
+emu1IndA --> index of 1st input gene (e.g. 1 <-- gA)
+emu2IndA --> index of 2nd input gene (e.g. 4 <-- gD)
+
+Ob1 --> number observations of target gene (1st branch) [e.g. as in DataBranch_1_3.txt]
+Ob2 --> number observations of target gene (2st branch) [e.g. as in DataBranch_2_3.txt]
+
+T    --> number MCMC iterations in each FOR loop (e.g. 1e7)
+iter --> [defined directly in the FOR loop] number of FOR loops
+N    --> number interpolator points [e.g. as in Interpolators1.txt or Interpolators2.txt]
+
+sigmaC --> noise standard deviation for likelihood (e.g. 0.5)
+ngenes --> total number of GRN genes (e.g. in toggle switch GRN they are 6)
+nPar   --> number ODE parameters (for OR gate with 2 input genes, they are 6)
+nReps  --> number of replicates (e.g. 3, as in file DataBranch_1_3.txt)
+
+tau	   --> standard deviation for Gaussian proposal distributions [during MCMC, they also
+           change in order to maintain a certain acceptance rate]
+
+inFile.open("DataBranch_1_3.txt")  --> gene expression values of gC (branch 1)
+inFile.open("DataBranch_2_3.txt")  --> gene expression values of gC (branch 2)
+inFile.open("TimesBranch_1_3.txt") --> pseudo times of gC (branch 1)
+inFile.open("TimesBranch_2_3.txt") --> pseudo times of gC (branch 2)
+inFile.open("Interpolators1.txt")  --> interpolators for branch 1
+inFile.open("Interpolators2.txt")  --> interpolators for branch 2
+
+                           Note: obviously txt files must be in the same folder of cpp and
+                           h files, otherwise the correct location must be specified.
+
+priorMax[nPar]        --> define maximum values in the uniform priors for ODE parameters
+fileName = "Risulta_" --> name of output files
+
+- Define standard deviation for MCMC sampling in variable "tau" [e.g. tau[0] = {0.5}]
+- Define mean and standard deviation to sample initial parameters values [e.g. params[0] =
+  log(randn(800,50))]
+
+fileName.erase(value) --> "value" must be the length of the output file name (e.g. if file
+        				  name is "Risulta_", then value = 8)
+
+******************************************************************************************
+
+Compile cpp file and run by giving as input a temperature value 100. Output is split in
+different files due to memory reasons (i.e. Risulta_100_1, Risulta_100_2, Risulta_100_3,
+..., Risulta_100_20). Last file (i.e. Risulta_100_20) contains log of estimated parameter
+values (each column is a  different ODE parameter; last column is log-likelihood).
+
+******************************************************************************************
+
+C++ file (computeBF.cpp) [example in ToggleSwitch/inference/geneC/BayesFactor/ORpm]
+
+Compile "paramest.cpp" file and run with different temperatures in range [0.1 - 100]. For
+standard MCMC run, temperature is 100. In order to compute Bayes' factor, MCMC must be run
+many times at different temperatures [e.g. 1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].
+
+File computeBF.cpp contains same variables as paramest.ccp (which need to be defined),
+except the following:
+
+- totalT                --> number of temperatures used (e.g. 11 when we run MCMC using
+			    temperatures: 1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)             
+
+- temperature[totalT]   --> temperatures used (e.g. {1,10,20,30,40,50,60,70,80,90,100})
+
+- fileName = "Risulta_" --> input file (in addition to data, pseudo-times and emulators);
+                            for different temperatures it must have the following name:
+                            Risulta_T where T is the temperature, e.g. 1, 10,..., 100.
+                            File format is the same as previous output files (n columns
+                            for n parameters, plus final column for log-likelihood). E.g.
+                            for temperature 1, it can be file Risulta_1_20, or a selection
+                            of values from Risulta_1_1, Risulta_1_2,..., Risulta_1_20.
+
+Compile computeBF file and run by giving as input a burn-in period. This should not be
+necessary (e.g. burn-in period = 1) if early samples have been already removed in input
+files Risulta_T.
+
+Output represents elements E_i as described in SI (where "i" is the temperature). Final
+value represents log marginal likelihood, computed using trapezoidal rule.
+
+******************************************************************************************
